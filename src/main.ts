@@ -50,6 +50,17 @@ client.on('ready', async () => {
     } catch (e) {
       console.error(`Couldn't create commands: ${guild.name} (${guild.id})`)
     }
+
+    try {
+      const events = await guild.scheduledEvents.fetch()
+      if (events.size > 0) {
+        console.log(`${guild.name} (${guild.id}) has ${events.size} events`)
+      }
+    } catch (e) {
+      console.error(
+        `Couldn't fetch scheduled events: ${guild.name} (${guild.id})`
+      )
+    }
   }
 })
 
