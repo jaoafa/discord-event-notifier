@@ -1,6 +1,4 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
 import config from 'config'
-import { ChannelType } from 'discord-api-types/v9'
 import {
   Client,
   Intents,
@@ -8,6 +6,10 @@ import {
   Permissions,
   TextChannel,
 } from 'discord.js'
+import {
+  ApplicationCommandOptionTypes,
+  ChannelTypes,
+} from 'discord.js/typings/enums'
 import {
   formatDate,
   getNotifyChannel,
@@ -29,19 +31,19 @@ client.on('ready', async () => {
 
   for (const guild of client.guilds.cache.values()) {
     try {
-      await guild.commands.create(
-        new SlashCommandBuilder()
-          .setName('event-notifier-register')
-          .setDescription('Register the guild')
-          .addChannelOption((option) =>
-            option
-              .setName('channel')
-              .setDescription('The channel to send the message to')
-              .addChannelType(ChannelType.GuildText)
-              .setRequired(true)
-          )
-          .toJSON()
-      )
+      await guild.commands.create({
+        name: 'event-notifier-register',
+        description: 'Register the guild',
+        options: [
+          {
+            name: 'channel',
+            description: 'The channel to send the message to',
+            type: ApplicationCommandOptionTypes.CHANNEL,
+            channel_types: [ChannelTypes.GUILD_TEXT],
+            required: true,
+          },
+        ],
+      })
       await guild.commands.create({
         name: 'event-notifier-unregister',
         description: 'Unregister this guild',
