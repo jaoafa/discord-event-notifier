@@ -1,15 +1,13 @@
 import config from 'config'
 import {
   Client,
-  Intents,
-  MessageEmbed,
-  Permissions,
   TextChannel,
+  ApplicationCommandOptionType,
+  ChannelType,
+  PermissionsBitField,
+  EmbedBuilder,
+  GuildScheduledEventStatus,
 } from 'discord.js'
-import {
-  ApplicationCommandOptionTypes,
-  ChannelTypes,
-} from 'discord.js/typings/enums'
 import {
   formatDate,
   getNotifyChannel,
@@ -19,11 +17,7 @@ import {
 } from './utlis'
 
 const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_SCHEDULED_EVENTS,
-    Intents.FLAGS.GUILD_MEMBERS,
-  ],
+  intents: ['GuildMessages', 'GuildScheduledEvents', 'GuildMembers'],
 })
 
 client.on('ready', async () => {
@@ -38,8 +32,8 @@ client.on('ready', async () => {
           {
             name: 'channel',
             description: 'The channel to send the message to',
-            type: ApplicationCommandOptionTypes.CHANNEL,
-            channel_types: [ChannelTypes.GUILD_TEXT],
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText],
             required: true,
           },
         ],
@@ -67,18 +61,17 @@ client.on('ready', async () => {
 })
 
 client.on('interactionCreate', async (interaction) => {
-  if (!interaction.isCommand()) return
+  if (!interaction.isChatInputCommand()) return
   const _guild = interaction.guild
   if (!_guild) return
   const guild = await _guild.fetch()
   console.log(`interactionCreate: ${guild.name} (${guild.id})`)
   const member = interaction.member
   if (!member) return
-  if (
-    !(member.permissions as unknown as Permissions).has(
-      Permissions.FLAGS.ADMINISTRATOR
-    )
-  ) {
+  if (!(member.permissions instanceof PermissionsBitField)) {
+    return
+  }
+  if (member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     await interaction.reply(
       ':x: You need to be an administrator to use this command.'
     )
@@ -121,22 +114,31 @@ client.on('guildScheduledEventCreate', async (event) => {
   if (!channel) {
     return
   }
-  const embed = new MessageEmbed()
+  const embed = new EmbedBuilder()
     .setTitle(`イベントが追加されました！`)
     .setURL(event.url)
-    .addField('イベントタイトル', event.name)
+    .addFields({
+      name: 'イベントタイトル',
+      value: event.name,
+    })
     .setColor('#00ff00')
-  if (event.scheduledStartTimestamp) {
-    embed.addField(
-      'イベント日時',
-      formatDate(event.scheduledStartAt, 'yyyy/MM/dd HH:mm:ss')
-    )
+  if (event.scheduledStartAt) {
+    embed.addFields({
+      name: 'イベント日時',
+      value: formatDate(event.scheduledStartAt, 'yyyy/MM/dd HH:mm:ss'),
+    })
   }
   if (event.description) {
-    embed.addField('イベント説明', event.description)
+    embed.addFields({
+      name: 'イベント説明',
+      value: event.description,
+    })
   }
   if (event.creator) {
-    embed.addField('イベント作成者', `<@${event.creator.id}>`)
+    embed.addFields({
+      name: 'イベント作成者',
+      value: `<@${event.creator.id}>`,
+    })
   }
   channel.send({
     embeds: [embed],
@@ -151,7 +153,10 @@ client.on('guildScheduledEventUpdate', async (oldEvent, newEvent) => {
     return
   }
   console.log(`Scheduled event ${newEvent.id} updated`)
-  if (oldEvent.status !== 'SCHEDULED' || newEvent.status !== 'ACTIVE') {
+  if (
+    oldEvent.status !== GuildScheduledEventStatus.Scheduled ||
+    newEvent.status !== GuildScheduledEventStatus.Active
+  ) {
     return
   }
   const subscripbers = await newEvent.fetchSubscribers({
@@ -163,16 +168,25 @@ client.on('guildScheduledEventUpdate', async (oldEvent, newEvent) => {
   if (!channel) {
     return
   }
-  const embed = new MessageEmbed()
+  const embed = new EmbedBuilder()
     .setTitle(`イベントが始まりました！`)
     .setURL(newEvent.url)
-    .addField('イベントタイトル', newEvent.name)
+    .addFields({
+      name: 'イベントタイトル',
+      value: newEvent.name,
+    })
     .setColor('#00ff00')
   if (newEvent.description) {
-    embed.addField('イベント説明', newEvent.description)
+    embed.addFields({
+      name: 'イベント説明',
+      value: newEvent.description,
+    })
   }
   if (newEvent.creator) {
-    embed.addField('イベント作成者', `<@${newEvent.creator.id}>`)
+    embed.addFields({
+      name: 'イベント作成者',
+      value: `<@${newEvent.creator.id}>`,
+    })
   }
   channel.send({
     content: mentions,

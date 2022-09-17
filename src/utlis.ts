@@ -54,6 +54,7 @@ export async function isRegistered(guild: Guild) {
   )
   return servers[guild.id] !== undefined
 }
+
 export function formatDate(date: Date, format: string): string {
   format = format.replace(/yyyy/g, String(date.getFullYear()))
   format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2))
