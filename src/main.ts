@@ -7,6 +7,7 @@ import {
   PermissionsBitField,
   EmbedBuilder,
   GuildScheduledEventStatus,
+  MessageFlags,
 } from 'discord.js'
 import {
   formatDate,
@@ -142,6 +143,7 @@ client.on('guildScheduledEventCreate', async (event) => {
   }
   channel.send({
     embeds: [embed],
+    flags: MessageFlags.SuppressNotifications,
   })
 })
 
@@ -191,6 +193,7 @@ client.on('guildScheduledEventUpdate', async (oldEvent, newEvent) => {
   channel.send({
     content: mentions,
     embeds: [embed],
+    flags: MessageFlags.SuppressNotifications,
   })
 })
 
