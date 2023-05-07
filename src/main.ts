@@ -7,6 +7,7 @@ import {
   PermissionsBitField,
   EmbedBuilder,
   GuildScheduledEventStatus,
+  MessageFlags,
 } from 'discord.js'
 import {
   formatDate,
@@ -140,8 +141,12 @@ client.on('guildScheduledEventCreate', async (event) => {
       value: `<@${event.creator.id}>`,
     })
   }
+  if (event.coverImageURL()) {
+    embed.setImage(event.coverImageURL())
+  }
   channel.send({
     embeds: [embed],
+    flags: MessageFlags.SuppressNotifications,
   })
 })
 
@@ -188,9 +193,13 @@ client.on('guildScheduledEventUpdate', async (oldEvent, newEvent) => {
       value: `<@${newEvent.creator.id}>`,
     })
   }
+  if (newEvent.coverImageURL()) {
+    embed.setImage(newEvent.coverImageURL())
+  }
   channel.send({
     content: mentions,
     embeds: [embed],
+    flags: MessageFlags.SuppressNotifications,
   })
 })
 
