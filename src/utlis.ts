@@ -9,7 +9,7 @@ export async function register(guild: Guild, channel: TextChannel) {
     fs.writeFileSync(SERVERS_FILE, JSON.stringify({}))
   }
   const servers: { [key: string]: string } = JSON.parse(
-    fs.readFileSync(SERVERS_FILE, 'utf8')
+    fs.readFileSync(SERVERS_FILE, 'utf8'),
   )
   if (servers[guild.id]) return false
   servers[guild.id] = channel.id
@@ -22,7 +22,7 @@ export async function unregister(guild: Guild) {
     fs.writeFileSync(SERVERS_FILE, JSON.stringify({}))
   }
   const servers: { [key: string]: string } = JSON.parse(
-    fs.readFileSync(SERVERS_FILE, 'utf8')
+    fs.readFileSync(SERVERS_FILE, 'utf8'),
   )
   if (!servers[guild.id]) return false
   delete servers[guild.id]
@@ -31,13 +31,13 @@ export async function unregister(guild: Guild) {
 }
 
 export async function getNotifyChannel(
-  guild: Guild
+  guild: Guild,
 ): Promise<TextChannel | null> {
   if (!fs.existsSync(SERVERS_FILE)) {
     fs.writeFileSync(SERVERS_FILE, JSON.stringify({}))
   }
   const servers: { [key: string]: string } = JSON.parse(
-    fs.readFileSync(SERVERS_FILE, 'utf8')
+    fs.readFileSync(SERVERS_FILE, 'utf8'),
   )
   if (!servers[guild.id]) return null
   const channel = await guild.channels.fetch(servers[guild.id])
@@ -50,7 +50,7 @@ export async function isRegistered(guild: Guild) {
     fs.writeFileSync(SERVERS_FILE, JSON.stringify([]))
   }
   const servers: { [key: string]: string } = JSON.parse(
-    fs.readFileSync(SERVERS_FILE, 'utf8')
+    fs.readFileSync(SERVERS_FILE, 'utf8'),
   )
   return servers[guild.id] !== undefined
 }

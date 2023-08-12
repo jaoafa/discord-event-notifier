@@ -55,7 +55,7 @@ client.on('ready', async () => {
       }
     } catch (e) {
       console.error(
-        `Couldn't fetch scheduled events: ${guild.name} (${guild.id})`
+        `Couldn't fetch scheduled events: ${guild.name} (${guild.id})`,
       )
     }
   }
@@ -74,7 +74,7 @@ client.on('interactionCreate', async (interaction) => {
   }
   if (member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     await interaction.reply(
-      ':x: You need to be an administrator to use this command.'
+      ':x: You need to be an administrator to use this command.',
     )
     return
   }
@@ -87,7 +87,7 @@ client.on('interactionCreate', async (interaction) => {
       return
     }
     await interaction.editReply(
-      `:white_check_mark: Event notifier registered. Notify channel: <#${channel.id}>`
+      `:white_check_mark: Event notifier registered. Notify channel: <#${channel.id}>`,
     )
   }
 
@@ -99,7 +99,7 @@ client.on('interactionCreate', async (interaction) => {
       return
     }
     await interaction.editReply(
-      ':white_check_mark: Event notifier unregistered.'
+      ':white_check_mark: Event notifier unregistered.',
     )
   }
 })
