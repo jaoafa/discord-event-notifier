@@ -1,4 +1,4 @@
-import { EmbedBuilder, GuildScheduledEvent } from "discord.js"
+import { EmbedBuilder, GuildScheduledEvent } from 'discord.js'
 
 export const Utils = {
   formatDate(date: Date, format: string): string {
@@ -44,5 +44,5 @@ export const Utils = {
       })
     }
     return embed
-  }
+  },
 }
