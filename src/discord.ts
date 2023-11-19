@@ -191,7 +191,7 @@ export class Discord {
       }
     }
 
-    await this.client.application.commands.set([builder.toJSON()], guild.id)
+    await this.client.application.commands.create(builder.toJSON(), guild.id)
   }
 
   waitReady() {
