@@ -37,10 +37,10 @@ export const Utils = {
         value: event.description,
       })
     }
-    if (event.creator) {
+    if (event.creatorId) {
       embed.addFields({
         name: 'イベント作成者',
-        value: `<@${event.creator.id}>`,
+        value: `<@${event.creatorId}>`,
       })
     }
     return embed
