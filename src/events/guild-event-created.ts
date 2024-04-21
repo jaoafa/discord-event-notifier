@@ -7,9 +7,7 @@ import { Utils } from '@/utils'
  * イベントが作成されたとき
  */
 export class GuildEventCreated extends BaseDiscordEvent<'guildScheduledEventCreate'> {
-  get eventName(): 'guildScheduledEventCreate' {
-    return 'guildScheduledEventCreate'
-  }
+  readonly eventName = 'guildScheduledEventCreate'
 
   async execute(event: GuildScheduledEvent) {
     const guild = event.guild
@@ -25,10 +23,6 @@ export class GuildEventCreated extends BaseDiscordEvent<'guildScheduledEventCrea
     const channel = await server.getChannel()
     if (!channel) {
       return
-    }
-
-    if (event.partial) {
-      event = await event.fetch()
     }
 
     const embed =
