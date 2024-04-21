@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@book000/eslint-config": "1.4.0",
-    "@book000/node-utils": "1.13.3",
+    "@book000/node-utils": "1.13.4",
     "@types/node": "20.12.7",
     "discord.js": "14.14.1",
     "eslint": "9.1.0",
@@ -40,5 +40,5 @@
     "tsx": "4.7.2",
     "typescript": "5.4.5"
   },
-  "packageManager": "pnpm@9.0.4"
+  "packageManager": "pnpm@9.0.5"
 }
