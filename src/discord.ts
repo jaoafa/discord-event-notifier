@@ -1,7 +1,6 @@
 import {
   BaseGuild,
   BaseInteraction,
-  CacheType,
   Client,
   GatewayIntentBits,
   Partials,
@@ -48,10 +47,13 @@ export class Discord {
       event.register()
     }
 
-    this.client.login(config.get('discord').token)
     this.rest = new REST().setToken(config.get('discord').token)
-
     this.config = config
+
+    this.client.login(config.get('discord').token).catch((error: unknown) => {
+      const logger = Logger.configure('Discord.constructor')
+      logger.error('❌ Failed to login', error as Error)
+    })
   }
 
   public getClient() {
@@ -62,8 +64,8 @@ export class Discord {
     return this.config
   }
 
-  public close() {
-    this.client.destroy()
+  public async close() {
+    await this.client.destroy()
   }
 
   async onReady() {
@@ -83,13 +85,15 @@ export class Discord {
         )
         this.client.on('interactionCreate', this.onInteractionCreate.bind(this))
 
-        this.updateAllGuildCommands()
+        this.updateAllGuildCommands().catch((error: unknown) => {
+          logger.error('❌ Failed to update commands', error as Error)
+        })
       },
       1000 * 60 * 60
     )
   }
 
-  async onInteractionCreate(interaction: BaseInteraction<CacheType>) {
+  async onInteractionCreate(interaction: BaseInteraction) {
     if (!interaction.isChatInputCommand()) {
       return
     }
@@ -174,11 +178,11 @@ export class Discord {
       .setName('discord-event-notifier')
       .setDescription('Discord Event Notifier')
 
-    for (const route in Discord.routes) {
-      if (!Discord.routes[route].conditions(guild)) {
+    for (const route of Discord.routes) {
+      if (!route.conditions(guild)) {
         continue
       }
-      const definition = Discord.routes[route].definition(guild)
+      const definition = route.definition(guild)
       if (!definition) {
         continue
       }

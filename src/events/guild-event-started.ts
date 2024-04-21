@@ -7,15 +7,9 @@ import { Utils } from '@/utils'
  * イベントが開始されたとき
  */
 export class GuildEventStarted extends BaseDiscordEvent<'guildScheduledEventUpdate'> {
-  get eventName(): 'guildScheduledEventUpdate' {
-    return 'guildScheduledEventUpdate'
-  }
+  readonly eventName = 'guildScheduledEventUpdate'
 
   async execute(oldEvent: GuildScheduledEvent, newEvent: GuildScheduledEvent) {
-    if (!oldEvent || !newEvent) {
-      return
-    }
-
     const guild = newEvent.guild
     if (!guild) {
       return
@@ -33,10 +27,6 @@ export class GuildEventStarted extends BaseDiscordEvent<'guildScheduledEventUpda
     const channel = await server.getChannel()
     if (!channel) {
       return
-    }
-
-    if (newEvent.partial) {
-      newEvent = await newEvent.fetch()
     }
 
     const subscribers = await newEvent.fetchSubscribers()
