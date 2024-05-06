@@ -22,6 +22,7 @@ export class Discord {
   private config: Configuration
   public readonly client: Client
   public readonly rest: REST
+  private onInteractionCreateFunction: (interaction: BaseInteraction) => void
 
   public static readonly routes: BaseCommand[] = [
     new RegisterCommand(),
@@ -29,6 +30,7 @@ export class Discord {
   ]
 
   constructor(config: Configuration) {
+    const logger = Logger.configure('Discord.constructor')
     this.client = new Client({
       intents: [
         GatewayIntentBits.Guilds,
@@ -36,8 +38,17 @@ export class Discord {
       ],
       partials: [Partials.GuildScheduledEvent],
     })
-    this.client.on('ready', this.onReady.bind(this))
-    this.client.on('interactionCreate', this.onInteractionCreate.bind(this))
+    this.client.on('ready', () => {
+      this.onReady().catch((error: unknown) => {
+        logger.error('❌ Failed to onReady', error as Error)
+      })
+    })
+    this.onInteractionCreateFunction = (interaction) => {
+      this.onInteractionCreate(interaction).catch((error: unknown) => {
+        logger.error('❌ Failed to onInteractionCreate', error as Error)
+      })
+    }
+    this.client.on('interactionCreate', this.onInteractionCreateFunction)
 
     const events: BaseDiscordEvent<any>[] = [
       new GuildEventCreated(this),
@@ -79,11 +90,8 @@ export class Discord {
       () => {
         const logger = Logger.configure('Discord.onReady.setInterval')
         logger.info('🔄 Re-registering interactionCreate handler')
-        this.client.off(
-          'interactionCreate',
-          this.onInteractionCreate.bind(this)
-        )
-        this.client.on('interactionCreate', this.onInteractionCreate.bind(this))
+        this.client.off('interactionCreate', this.onInteractionCreateFunction)
+        this.client.on('interactionCreate', this.onInteractionCreateFunction)
 
         this.updateAllGuildCommands().catch((error: unknown) => {
           logger.error('❌ Failed to update commands', error as Error)
