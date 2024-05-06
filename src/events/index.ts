@@ -11,7 +11,11 @@ export abstract class BaseDiscordEvent<T extends keyof ClientEvents> {
   abstract get eventName(): T
 
   register(): void {
-    this.discord.client.on(this.eventName, this.execute.bind(this))
+    this.discord.client.on(this.eventName, (...eventArguments) => {
+      this.execute(...eventArguments).catch((error: unknown) => {
+        console.error(`❌ Failed to execute ${this.eventName}`, error)
+      })
+    })
   }
 
   abstract execute(...eventArguments: ClientEvents[T]): Promise<void>
