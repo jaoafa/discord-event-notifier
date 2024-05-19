@@ -1,11 +1,16 @@
 {
+  "name": "discord-event-notifier",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-18",
-  "otherPortAttributes": {
+  "remoteUser": "node",
+  "otherPortsAttributes": {
     "onAutoForward": "silent"
   },
-  "name": "discord-event-notifier",
-  "postCreateCommand": "pnpm install",
+  "postCreateCommand": "sudo npm uninstall -g pnpm yarn && sudo chown node node_modules .pnpm-store && sudo corepack enable && corepack install && pnpm install",
   "waitFor": "postCreateCommand",
+  "mounts": [
+    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=pnpm-store,target=${containerWorkspaceFolder}/.pnpm-store,type=volume"
+  ],
   "customizations": {
     "settings": {
       "[typescript]": {
