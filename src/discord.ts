@@ -106,10 +106,7 @@ export class Discord {
       return
     }
 
-    if (
-      !interaction.command ||
-      interaction.command.name !== 'discord-event-notifier'
-    ) {
+    if (interaction.command?.name !== 'discord-event-notifier') {
       return
     }
     const guild = interaction.guild
@@ -120,7 +117,7 @@ export class Discord {
       const group = interaction.options.getSubcommandGroup()
       const subcommand = interaction.options.getSubcommand()
       const definition = route.definition(guild)
-      return definition && definition.name === (group ?? subcommand)
+      return definition?.name === (group ?? subcommand)
     })
     if (!command) return
 
@@ -132,20 +129,16 @@ export class Discord {
               return interaction.user.id === permission.identifier
             }
             case 'ROLE': {
-              if (!interaction.guild) {
-                return false
-              }
-              const user = interaction.guild.members.resolve(interaction.user)
-              if (!user) return false
-              return user.roles.cache.has(permission.identifier)
+              const member = interaction.guild?.members.resolve(
+                interaction.user
+              )
+              return member?.roles.cache.has(permission.identifier) ?? false
             }
             case 'PERMISSION': {
-              if (!interaction.guild) {
-                return false
-              }
-              const user = interaction.guild.members.resolve(interaction.user)
-              if (!user) return false
-              return user.permissions.has(permission.identifier)
+              const member = interaction.guild?.members.resolve(
+                interaction.user
+              )
+              return member?.permissions.has(permission.identifier) ?? false
             }
           }
         }
