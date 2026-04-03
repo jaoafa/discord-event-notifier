@@ -12,8 +12,8 @@ export abstract class BaseDiscordEvent<T extends keyof ClientEvents> {
 
   register(): void {
     this.discord.client.on(this.eventName, (...eventArguments) => {
-      this.execute(...eventArguments).catch((error: unknown) => {
-        console.error(`❌ Failed to execute ${this.eventName}`, error)
+      this.execute(...eventArguments).catch((err: unknown) => {
+        console.error(`❌ Failed to execute ${this.eventName}`, err)
       })
     })
   }
