@@ -1,7 +1,7 @@
 import { GuildScheduledEvent, MessageFlags } from 'discord.js'
 import { BaseDiscordEvent } from '.'
 import { EventNotifyServer } from '@/server'
-import { Utils } from '@/utils'
+import { Utilities } from '@/utilities'
 
 /**
  * イベントが開始されたとき
@@ -35,7 +35,9 @@ export class GuildEventStarted extends BaseDiscordEvent<'guildScheduledEventUpda
       .join(' ')
 
     const embed =
-      Utils.getEventEmbed(newEvent).setTitle(`:tada:イベントが始まりました！`)
+      Utilities.getEventEmbed(newEvent).setTitle(
+        `:tada:イベントが始まりました！`
+      )
     await channel.send({
       content: mentions,
       embeds: [embed],

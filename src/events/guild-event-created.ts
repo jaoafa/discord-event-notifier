@@ -1,7 +1,7 @@
 import { GuildScheduledEvent, MessageFlags } from 'discord.js'
 import { BaseDiscordEvent } from '.'
 import { EventNotifyServer } from '@/server'
-import { Utils } from '@/utils'
+import { Utilities } from '@/utilities'
 
 /**
  * イベントが作成されたとき
@@ -26,7 +26,7 @@ export class GuildEventCreated extends BaseDiscordEvent<'guildScheduledEventCrea
     }
 
     const embed =
-      Utils.getEventEmbed(event).setTitle(`:new:イベントが追加されました！`)
+      Utilities.getEventEmbed(event).setTitle(`:new:イベントが追加されました！`)
     await channel.send({
       embeds: [embed],
       flags: MessageFlags.SuppressNotifications,

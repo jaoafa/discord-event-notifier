@@ -10,7 +10,7 @@ import {
   SlashCommandSubcommandGroupBuilder,
 } from 'discord.js'
 import { Logger } from '@book000/node-utils'
-import { Configuration } from './config'
+import { Config } from './config'
 import { BaseDiscordEvent } from './events'
 import { GuildEventCreated } from './events/guild-event-created'
 import { GuildEventStarted } from './events/guild-event-started'
@@ -19,7 +19,7 @@ import { RegisterCommand } from './commands/register'
 import { UnregisterCommand } from './commands/unregister'
 
 export class Discord {
-  private config: Configuration
+  private config: Config
   public readonly client: Client
   public readonly rest: REST
   private onInteractionCreateFunction: (interaction: BaseInteraction) => void
@@ -29,7 +29,7 @@ export class Discord {
     new UnregisterCommand(),
   ]
 
-  constructor(config: Configuration) {
+  constructor(config: Config) {
     const logger = Logger.configure('Discord.constructor')
     this.client = new Client({
       intents: [
@@ -39,14 +39,22 @@ export class Discord {
       partials: [Partials.GuildScheduledEvent],
     })
     this.client.on('ready', () => {
-      this.onReady().catch((error: unknown) => {
-        logger.error('❌ Failed to onReady', error as Error)
-      })
+      ;(async () => {
+        try {
+          await this.onReady()
+        } catch (error: unknown) {
+          logger.error('❌ Failed to onReady', error as Error)
+        }
+      })()
     })
     this.onInteractionCreateFunction = (interaction) => {
-      this.onInteractionCreate(interaction).catch((error: unknown) => {
-        logger.error('❌ Failed to onInteractionCreate', error as Error)
-      })
+      ;(async () => {
+        try {
+          await this.onInteractionCreate(interaction)
+        } catch (error: unknown) {
+          logger.error('❌ Failed to onInteractionCreate', error as Error)
+        }
+      })()
     }
     this.client.on('interactionCreate', this.onInteractionCreateFunction)
 
@@ -61,10 +69,15 @@ export class Discord {
     this.rest = new REST().setToken(config.get('discord').token)
     this.config = config
 
-    this.client.login(config.get('discord').token).catch((error: unknown) => {
-      const logger = Logger.configure('Discord.constructor')
-      logger.error('❌ Failed to login', error as Error)
-    })
+    const client = this.client
+    ;(async () => {
+      try {
+        await client.login(config.get('discord').token)
+      } catch (error: unknown) {
+        const logger = Logger.configure('Discord.constructor')
+        logger.error('❌ Failed to login', error as Error)
+      }
+    })()
   }
 
   public getClient() {
@@ -92,10 +105,13 @@ export class Discord {
         logger.info('🔄 Re-registering interactionCreate handler')
         this.client.off('interactionCreate', this.onInteractionCreateFunction)
         this.client.on('interactionCreate', this.onInteractionCreateFunction)
-
-        this.updateAllGuildCommands().catch((error: unknown) => {
-          logger.error('❌ Failed to update commands', error as Error)
-        })
+        ;(async () => {
+          try {
+            await this.updateAllGuildCommands()
+          } catch (error: unknown) {
+            logger.error('❌ Failed to update commands', error as Error)
+          }
+        })()
       },
       1000 * 60 * 60
     )

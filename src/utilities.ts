@@ -1,30 +1,24 @@
 import { EmbedBuilder, GuildScheduledEvent } from 'discord.js'
 
-export const Utils = {
+export const Utilities = {
   formatDate(date: Date, format: string): string {
-    format = format.replaceAll('yyyy', date.getFullYear().toString())
-    format = format.replaceAll(
-      'MM',
+    format = format.replaceAll('yyyy', () => date.getFullYear().toString())
+    format = format.replaceAll('MM', () =>
       ('0' + (date.getMonth() + 1).toString()).slice(-2)
     )
-    format = format.replaceAll(
-      'dd',
+    format = format.replaceAll('dd', () =>
       ('0' + date.getDate().toString()).slice(-2)
     )
-    format = format.replaceAll(
-      'HH',
+    format = format.replaceAll('HH', () =>
       ('0' + date.getHours().toString()).slice(-2)
     )
-    format = format.replaceAll(
-      'mm',
+    format = format.replaceAll('mm', () =>
       ('0' + date.getMinutes().toString()).slice(-2)
     )
-    format = format.replaceAll(
-      'ss',
+    format = format.replaceAll('ss', () =>
       ('0' + date.getSeconds().toString()).slice(-2)
     )
-    format = format.replaceAll(
-      'SSS',
+    format = format.replaceAll('SSS', () =>
       ('00' + date.getMilliseconds().toString()).slice(-3)
     )
     return format
@@ -40,13 +34,19 @@ export const Utils = {
     if (event.scheduledStartAt) {
       embed.addFields({
         name: 'イベント開始日時',
-        value: Utils.formatDate(event.scheduledStartAt, 'yyyy/MM/dd HH:mm:ss'),
+        value: Utilities.formatDate(
+          event.scheduledStartAt,
+          'yyyy/MM/dd HH:mm:ss'
+        ),
       })
     }
     if (event.scheduledEndAt) {
       embed.addFields({
         name: 'イベント終了日時',
-        value: Utils.formatDate(event.scheduledEndAt, 'yyyy/MM/dd HH:mm:ss'),
+        value: Utilities.formatDate(
+          event.scheduledEndAt,
+          'yyyy/MM/dd HH:mm:ss'
+        ),
       })
     }
     if (event.description) {
