@@ -11,9 +11,7 @@ import { EventNotifyServer } from '@/server'
 
 export class UnregisterCommand implements BaseCommand {
   definition():
-    | SlashCommandSubcommandBuilder
-    | SlashCommandSubcommandGroupBuilder
-    | null {
+    SlashCommandSubcommandBuilder | SlashCommandSubcommandGroupBuilder | null {
     return new SlashCommandSubcommandBuilder()
       .setName('unregister')
       .setDescription(
