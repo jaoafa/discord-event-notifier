@@ -1,7 +1,7 @@
 {
   "name": "discord-event-notifier",
   "version": "2.0.0",
-  "description": "When a Discord event is started, send a Mention to the users you have marked as interested. ",
+  "description": "When a Discord event is started, send a Mention to the users you have marked as interested.",
   "homepage": "https://github.com/jaoafa/discord-event-notifier",
   "bugs": {
     "url": "https://github.com/jaoafa/discord-event-notifier/issues"
